@@ -1,0 +1,138 @@
+1.GPIO0_1 RST
+
+GPIO0 0x2014_0000
+
+0x400 GPIO_DIR GPIO 方向控制寄存器
+0x000～0x3FC GPIO_DATA GPIO 数据寄存器
+
+0b10_0000_0000 Byte7 200
+0b01_0000_0000 Byte6 100
+0b00_1000_0000 Byte5 80
+0b00_0100_0000 Byte4 40
+0b00_0010_0000 Byte3 20
+0b00_0001_0000 Byte2 10
+0b00_0000_1000 Byte1 8
+0b00_0000_0100 Byte0 4
+
+复用寄存器.
+0x074 Register Name muxctrl_reg29
+
+
+RST 低电平
+himm 0x200f0074  0x0
+himm 0x20140400 0x02
+himm 0x20140008 0x00
+
+RST 高电平
+himm 0x200f0074  0x0
+himm 0x20140400 0x02
+himm 0x20140008 0x02
+
+
+
+RST 低电平
+himm 0x200f0074  0x0
+himm 0x20140400 0x02
+himm 0x20140008 0x00
+
+RST 高电平
+himm 0x20140008 0x02
+
+
+
+
+1.GPIO0_0 PKT
+
+GPIO0 0x2014_0000
+
+0x400 GPIO_DIR GPIO 方向控制寄存器
+0x000～0x3FC GPIO_DATA GPIO 数据寄存器
+
+0b10_0000_0000 Byte7 200
+0b01_0000_0000 Byte6 100
+0b00_1000_0000 Byte5 80
+0b00_0100_0000 Byte4 40
+0b00_0010_0000 Byte3 20
+0b00_0001_0000 Byte2 10
+0b00_0000_1000 Byte1 8
+0b00_0000_0100 Byte0 4
+
+
+
+表2-27 复用寄存器概览（复用寄存器基地址为 0x200F_0000）
+
+0x050 muxctrl_reg20 SPI1_SCLK 管脚的复用控制寄存器 2-54
+0x054 muxctrl_reg21 SPI1_SDO 管脚的复用控制寄存器 2-55
+0x058 muxctrl_reg22 SPI1_SDI 管脚的复用控制寄存器 2-55
+0x05C muxctrl_reg23 SPI1_CSN0 管脚的复用控制寄存器
+0x030 muxctrl_reg12 SPI1_CSN1 管脚的复用控制寄存器 2-54
+
+
+himm 0x200f0050  0x01
+himm 0x200f0054  0x01
+himm 0x200f0058  0x01
+himm 0x200f005C  0x01
+himm 0x200f0030  0x01
+
+
+
+himm 0x20060000 0x04
+
+
+
+GPIO3_7  SPI1_SCLK
+
+RST 低电平 SPI1_SCLK
+himm 0x200f0050 0x0
+himm 0x20170400 0x80
+himm 0x20170200 0x00
+
+himm 0x20170200 0x80
+
+
+0x054 muxctrl_reg21 SPI1_SDO GPIO4_0 管脚的复用控制寄存器 2-55
+himm 0x200f0054 0x0
+himm 0x20180400 0x01
+
+himm 0x20180004 0x00
+himm 0x20180004 0x01
+
+
+0x058 muxctrl_reg22 SPI1_SDI GPIO4_1管脚的复用控制寄存器 2-55
+himm 0x200f0058 0x0
+himm 0x20180400 0x02
+
+himm 0x20180008 0x00
+himm 0x20180008 0x02
+
+
+/******************测试OK**************/
+GPIO4_2  SPI1_CSN0
+
+himm 0x200f005C 0x0
+himm 0x20180400 0x04
+
+//低电平
+himm 0x20180010 0x00
+
+//高电平
+himm 0x20180010 0x04
+/*************************************/
+
+
+
+/******************测试OK**************/
+GPIO0_3  SPI1_CSN1
+GPIO0 0x2014_0000
+
+himm 0x200f0030 0x00
+himm 0x20140400 0x08
+
+//低电平
+himm 0x20140020 0x00
+
+//高电平
+himm 0x20140020 0x08
+/*************************************/
+
+

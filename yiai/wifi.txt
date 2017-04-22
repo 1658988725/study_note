@@ -1,0 +1,33 @@
+1.±àÒë8188Çý¶¯
+ifeq ($(CONFIG_PLATFORM_ARM_HISI3516CV100), y)
+EXTRA_CFLAGS += -DCONFIG_LITTLE_ENDIAN
+ARCH := arm
+CROSS_COMPILE := arm-hisiv100nptl-linux-
+KVER  := 3.0.8
+KSRC ?= /home/ll/work2016/hisi3516Cv100/Hi3518_SDK_V1.0.9.0/osdrv/kernel/linux-3.0.y
+endif
+
+
+
+insmod 8188eu.ko 
+ifconfig wlan0 192.168.100.2
+./sbin/hostapd -B ./sbin/hostapd.conf 
+udhcpd sbin/udhcpd.conf
+
+
+./clkcfg_hi3518.sh 
+./sysctl_hi3518.sh
+ ./load3518e -a imx122
+
+ ./load3518 -a imx122
+
+mount -t nfs -o nolock 192.168.100.101:/home/ll/work2016/nfs /tmp/
+
+
+mount -t nfs -o nolock 192.168.100.102:/home/ll/work2016/nfs /tmp/
+
+mount -t nfs -o nolock 192.168.100.102:/nfs /tmp/
+
+mount -t nfs -o nolock 192.168.100.104:/home/ll/work2016/nfs /tmp/
+
+ echo "all=7" > /proc/umap/logmpp

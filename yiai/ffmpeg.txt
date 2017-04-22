@@ -1,0 +1,72 @@
+只改变容器.
+
+ ffmpeg -i input.mp4 -y -vcodec copy -acodec copy output.mkv
+
+ ffmpeg -i 20160726110740_180.MP4 -y -vcodec copy -acodec copy 123.ts
+
+
+
+ffmpeg -i 20160521131320_180.MP4 -y -vcodec copy -acodec copy 20160521131320_180.ts
+
+
+流化MP4
+MP4Box -add MyVideo.mp4 -isma Myvideo-box.mp4
+
+
+
+#直播方案的架构
+http://www.easydarwin.org/article/EasyDarwin/39.html
+
+live555获取不到linux的ip地址，是因为防火墙的问题
+http://blog.csdn.net/onelight1997/article/details/7528935
+
+
+ffmpeg hisi编译
+
+./configure --disable-yasm --enable-gpl --enable-nonfree --prefix=./install --enable-cross-compile --cross-prefix=arm-hisiv100nptl-linux- --cc=arm-hisiv100nptl-linux-gcc --arch=arm  --target-os=linux 
+
+
+./configure --disable-everything --disable-yasm --enable-gpl --enable-nonfree --prefix=./install --enable-cross-compile --cross-prefix=arm-hisiv100nptl-linux- --cc=arm-hisiv100nptl-linux-gcc --arch=arm  --target-os=linux
+
+
+
+arm-hisiv100nptl-linux-gcc decoding_encoding.c -I/home/ll/work2016/ffmepg/hisi_ffmpeg/ffmpeg-3.0/install/include -pthread -L/home/ll/work2016/ffmepg/hisi_ffmpeg/ffmpeg-3.0/install/lib -lavdevice -lavfilter -lavformat -lavcodec -lz -lswresample -lswscale -lavutil -lm    -lm -o decoding_encoding
+
+
+arm-hisiv100nptl-linux-gcc decoding_encoding.c -I/home/ll/work2016/ffmepg/hisi_ffmpeg/ffmpeg-3.0/install/include -pthread -L/home/ll/work2016/ffmepg/hisi_ffmpeg/ffmpeg-3.0/install/lib -lavdevice -lavfilter -lavformat -lavcodec -lswresample -lswscale -lavutil -lm    -lm -o decoding_encoding
+
+arm-hisiv100nptl-linux-gcc ffmpgRtspSrv.c -I/home/ll/work2016/ffmepg/hisi_ffmpeg/ffmpeg-3.0/install/include -pthread -L/home/ll/work2016/ffmepg/hisi_ffmpeg/ffmpeg-3.0/install/lib -lavdevice -lavfilter -lavformat -lavcodec -lswresample -lswscale -lavutil -lm -static -o ffmpgRtspSrv
+
+
+
+
+./configure --disable-yasm --enable-gpl --enable-nonfree --prefix=./install --disable-muxers  --disable-indevs --disable-outdevs --disable-filters  --disable-encoders  --disable-decoders --enable-cross-compile --cross-prefix=arm-hisiv100nptl-linux- --cc=arm-hisiv100nptl-linux-gcc --arch=arm  --target-os=linux 
+
+
+./configure --disable-yasm --enable-gpl --enable-nonfree --prefix=./install --enable-cross-compile --cross-prefix=arm-hisiv100nptl-linux- --cc=arm-hisiv100nptl-linux-gcc --arch=arm  --target-os=linux 
+
+
+
+
+./configure --disable-everything --disable-muxers --disable-avdevice --disable-armv5te --disable-armv6 --disable-armv6t2 --disable-zlib --disable-bzlib --disable-debug --disable-ffmpeg --disable-ffserver --disable-ffplay --disable-filters --disable-devices --disable-encoders --disable-hwaccels --enable-static --enable-memalign-hack --enable-small --enable-demuxers --enable-parsers --enable-protocols --disable-yasm --enable-libx264 --enable-gpl --enable-muxer=mp4 --enable-encoder=aac --enable-encoder=libx264
+
+
+./configure  --prefix=./install --enable-cross-compile --cross-prefix=arm-hisiv100nptl-linux- --cc=arm-hisiv100nptl-linux-gcc --arch=arm  --target-os=linux --disable-everything --disable-muxers --disable-avdevice --disable-armv5te --disable-armv6 --disable-armv6t2 --disable-zlib --disable-bzlib --disable-debug --disable-ffmpeg --disable-ffserver --disable-ffplay --disable-filters --disable-devices --disable-encoders --disable-hwaccels --enable-static --enable-memalign-hack --enable-small --enable-demuxers --enable-parsers --enable-protocols --disable-yasm --enable-gpl --enable-muxer=mp4
+
+20160503
+/*******************FFmpeg 最终编译********************************/
+1.下载代码
+git clone git://source.ffmpeg.org/ffmpeg.git ffmpeg
+
+2.
+./configure --disable-yasm --enable-gpl --enable-nonfree --prefix=./install --enable-cross-compile --cross-prefix=arm-hisiv100nptl-linux- --cc=arm-hisiv100nptl-linux-gcc --arch=arm  --target-os=linux 
+
+make
+make install
+
+把ffmpgRtspSrv.c copy到~/install/share/ffmpeg/examples 下面.注意修改链接lib 和头文件的路径.
+3.编译ffmpgRtspSrv.c.
+arm-hisiv100nptl-linux-gcc ffmpgRtspSrv.c -I/home/ll/work2016/ffmepg/hisi_ffmpeg/ffmpeg-3.0/install/include -pthread -L/home/ll/work2016/ffmepg/hisi_ffmpeg/ffmpeg-3.0/install/lib -lavdevice -lavfilter -lavformat -lavcodec -lswresample -lswscale -lavutil -lm -static -o ffmpgRtspSrv
+
+4.ffmpgRtspSrv.c 修改链接的路径.
+

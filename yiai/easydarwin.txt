@@ -1,0 +1,6 @@
+1.Get source
+git clone https://github.com/EasyDarwin/EasyDarwin.git
+
+2.²¿Êð·½·¨.
+http://doc.easydarwin.org/EasyDarwin/README/#_1
+

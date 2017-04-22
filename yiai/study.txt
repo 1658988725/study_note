@@ -1,0 +1,97 @@
+1.linux查看sh 
+ls /bin/sh -l
+
+默认是dash 需要修改位bash
+sudo dpkg-reconfigure dash 选择no即可.
+
+
+2.arm-hisiv300 uclibc 暂时选择的v300
+  arm-hisiv400 glibc
+
+
+交叉编译工具是32位的，需要64位置系统架构支持.
+
+MakeFile 里面用#注释的行后面不能带 \ 否则注释有可能会无效.
+
+
+
+wpa_supplicant -B -iwlan0 -c wpa_supplicant.conf 
+
+wpa_cli -iwlan0 scan 
+
+wpa_cli -iwlan0 scan_results
+
+
+需要root权限
+添加默认路由：
+#route add default gw 192.168.0.1
+删除默认路由：
+#route del default gw 192.168.0.1
+
+查看路由表：
+route -n
+
+
+find -type f |wc -l
+
+
+# cat /proc/cmdline 
+mem=128M console=ttyAMA0,115200 root=/dev/mtdblock2 rootfstype=jffs2 mtdparts=hi_sfc:1M(boot),3M(kernel),12M(rootfs)
+
+读取flash：
+# cat /proc/mtd 
+dev:    size   erasesize  name
+mtd0: 00100000 00010000 "boot"
+mtd1: 00300000 00010000 "kernel"
+mtd2: 00c00000 00010000 "rootfs"
+
+dd if=/dev/mtd0 of=/home/boot.bin
+dd if=/dev/mtd1 of=/home/kernel.bin
+dd if=/dev/mtd2 of=/home/rootfs.bin
+
+dd if=/dev/mtd2 of=/mnt/rootfs.bin
+
+dd if=/dev/mtd1 of=/mnt/mmc/bak/kernel.bin
+dd if=/dev/mtd2 of=/mnt/mmc/bak/rootfs.bin
+
+
+
+
+dd of=/dev/mtd1 if=/mnt/bak/kernel.bin
+dd of=/dev/mtd2 if=/mnt/bak/rootfs.bin
+
+
+
+
+
+dd if=/mnt/mmc/bak/rootfs_bak.bin of=/dev/mtd2 
+
+
+kernel
+sf probe 0;sf erase 100000 0x300000;sf write 0x80008000 100000 0x300000
+rootfs
+sf probe 0;sf erase 400000 0xC00000;sf write 0x80008000 400000 0xC00000
+
+
+
+
+mtd -r earse kernel
+mdt -r write kernel kernel.bin
+
+
+
+
+
+Notepade++ 加载以前打开文件卡住
+%AppData%\Notepad++
+删除这个目录.
+
+
+Process Control Daemon
+
+
+PCD
+20.MMB LEAK(pid=2876): 0xC68B9000, 32768 bytes, '' mmz_userdev_release: mmb<0xC68B9000> mapped to userspace 0x40f50000 will be force unmaped!
+    解决：客服端跟服务器端进行socket通信时，服务器异常断开，而客户端并不知道服务器已经断开，继续向服务器发送数据，从而引发了SIGPIPE信号，内核响应这个信号，强行终止了程序；
+signal(SIGPIPE, SIG_IGN);
+

@@ -1,0 +1,215 @@
+对linux系统要求：
+1.支持运行32位程序；
+2.bash
+/*******************************************/
+linux查看sh 
+ls /bin/sh -l
+
+默认是dash 需要修改位bash
+sudo dpkg-reconfigure dash 选择no即可.
+/*******************************************/
+
+
+1.解压SDK
+tar xvzxf Hi3518_SDK_V1.0.B.0.tgz
+
+./sdk.unpack
+
+2.安装cross tools,（需要root权限，一般都用uclib 所以用hisiv100nptl.）
+cd osdrv/toolchain/arm-hisiv100nptl-linux/
+chmod +x cross.install
+sudo cross.install
+
+需要注意的地方：
+2.1.系统需要32位的，如果64位系统请安装32位的lib支持；
+
+安装完成后export命令，需要看到hisi cross tools的目录
+
+declare -x PATH="/opt/hisi-linux-nptl/arm-hisiv100-linux/target/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/opt/hisi-linux/x86-arm/gcc-3.4.3-uClibc-0.9.28/usr/bin/:/opt/hisi-linux/x86-arm/gcc-3.4.3-uClibc-0.9.28/bin/"
+
+2.2.把osdrv/uboot/u-boot-2010.06/tools/mkimage 复制到/user/bin下
+因为makefile里面打包时候用了mkimage，但是没加到PATH下面.
+
+2.3.交叉环境安装完成后直接执行arm-hisiv100nptl-linux-gcc 命令，结果应该如下，代表交叉环境编辑成功了.
+ll@ubuntu:~$ arm-hisiv100nptl-linux-gcc
+arm-hisiv100nptl-linux-gcc: no input files
+
+
+
+
+3.编译SDK(请参考osdrv/readme_cn.txt)
+cd osdrv/
+make OSDRV_CROSS=arm-hisiv100nptl-linux CHIP=hi356c all
+
+
+
+4.编译行车记录仪app
+hkipc所有的代码路径：mpp/sample/hkipc_3516cv100/
+hkipc所有的lib路径：mpp/sample/hkipc_3516cv100/carlib
+
+
+需要注意这两个库需要特别提供的.
+libaacdec.a
+libaacenc.a
+
+
+
+
+编译方法:
+cd mpp/sample/hkipc_3516cv100/
+make
+
+生成文件
+mpp/sample/hkipc_3516cv100/tftboot/hisi3516cv100/hkipc
+
+
+
+
+
+
+/**************************************终端部分*********************************************/
+
+1.终端的库都在目录下面:
+
+/mnt/sif/lib
+
+2.在PC无线链接到设备的AP后，PC会获取到192.168.100.X的IP地址;
+设备IP地址192.168.100.2
+
+telnet 192.168.100.2
+
+User:root
+Passwd:hipc3518
+
+3.用tftp上次文件到终端;
+需要开启设备端的tftpserver （tftpd32.exe 或者tftpd）
+
+tftp -r hkipc -g 192.168.100.X
+
+tftp -r libnetfactoryap.so -g 192.168.100.102
+
+
+
+上次hkipc的时候，需要先调用下面的脚本关闭应用程序;
+runhkipc stop
+如果操作超过三分钟，建议关闭看门狗；否则三分钟后看门狗启动了就会reboot了.
+去掉看门狗：
+
+rmmod wdt
+
+
+
+
+
+/**************************************环境搭建部分*********************************************/
+编译服务器:ubuntu
+工作：win7
+win7和Ubuntu在同一个局域网
+Ubuntu和ipc通过wifi连接
+
+p33p1是Ubuntu有线网络；wlan0 是wifi网卡.
+
+Ubuntu上配置：
+ll@ubuntu:~/work2016/nfs$ ifconfig 
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:1556 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:1556 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:118001 (118.0 KB)  TX bytes:118001 (118.0 KB)
+
+p33p1     Link encap:Ethernet  HWaddr 44:37:e6:5a:eb:09  
+          inet addr:192.168.40.105  Bcast:192.168.40.255  Mask:255.255.255.0
+          inet6 addr: fd45:95a7:661c:0:4637:e6ff:fe5a:eb09/64 Scope:Global
+          inet6 addr: fe80::4637:e6ff:fe5a:eb09/64 Scope:Link
+          inet6 addr: fd45:95a7:661c:0:466:631a:8b3:4e9e/64 Scope:Global
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:973423 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:522892 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:105068163 (105.0 MB)  TX bytes:1512706035 (1.5 GB)
+          Interrupt:17 
+
+wlan0     Link encap:Ethernet  HWaddr d8:5d:4c:7a:a9:07  
+          inet addr:192.168.100.102  Bcast:192.168.100.255  Mask:255.255.255.0
+          inet6 addr: fe80::da5d:4cff:fe7a:a907/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:1186 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:3158 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:118526 (118.5 KB)  TX bytes:273716 (273.7 KB)
+
+
+
+
+1.Ubuntu通过wifi连接到到ipc.
+
+ifconfig wlan1 up
+wpa_supplicant -B -iwlan0 -c wpa_supplicant.conf 
+wpa_cli -iwlan0 scan 
+wpa_cli -iwlan0 scan_results
+udhcpc -i wlan0
+
+/****************************wpa_supplicant.conf***********************/ 
+#可有可无，没有的话无法用wpa_cli terminate来关闭wpa_supplicant
+ctrl_interface=/var/run/wpa_supplicant
+
+# 确保只有root用户能读取WPA的配置，可有可无，尤其是在嵌入式设备上
+ctrl_interface_group=0
+
+# 使用wpa_supplicant来扫描和选择AP，也可以设置成0或2，但只有1才能正确工作
+ap_scan=1
+
+network={
+#AP的名字
+   ssid="CT_br4"
+#AP的key
+   psk="12345678"
+}
+/****************************wpa_supplicant.conf***********************/
+
+2.添加默认网关，否则Ubuntu没法连接到internet
+需要root权限
+添加默认路由：
+#route add default gw 192.168.0.1
+删除默认路由：
+#route del default gw 192.168.0.1
+
+查看路由表：
+route -n
+
+
+3.Ubuntu安装nfs server
+sudo apt-get install nfs-server
+
+编辑/etc/exports  设置共享目录如下
+
+# /etc/exports: the access control list for filesystems which may be exported
+#               to NFS clients.  See exports(5).
+#
+# Example for NFSv2 and NFSv3:
+# /srv/homes       hostname1(rw,sync,no_subtree_check) hostname2(ro,sync,no_subtree_check)
+#
+# Example for NFSv4:
+# /srv/nfs4        gss/krb5i(rw,sync,fsid=0,crossmnt,no_subtree_check)
+# /srv/nfs4/homes  gss/krb5i(rw,sync,no_subtree_check)
+#
+/home/ll/work2016/nfs * (rw,sync)
+
+4.通过串口在设备端进行mount
+mount -t nfs -o nolock 192.168.100.101:/home/ll/work2016/nfs /tmp/
+
+5.直接在设备tmp目录下就可以访问编译服务器对应的代码了.
+
+
+
+hostapd -B /mnt/sif/hostapd.conf
+udhcpd /mnt/sif/udhcpd.conf
+
+
+
+
+
+

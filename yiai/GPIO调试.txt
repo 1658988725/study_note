@@ -1,0 +1,88 @@
+喇叭功放：
+
+I2S_WS_TX/GPIO6_0
+I2S_MCLK/GPIO6_1
+I2S_SD_RX/GPIO6_2
+
+himm 0x201A0400 0x007
+himm 0x201A001C 0x007
+
+
+
+1.system led
+GPIO7_1
+
+GPIO7 0x201B_0000
+
+0x400 GPIO_DIR GPIO 方向控制寄存器
+0x000～0x3FC GPIO_DATA GPIO 数据寄存器
+
+0b10_0000_0000 Byte7 200
+0b01_0000_0000 Byte6 100
+0b00_1000_0000 Byte5 80
+0b00_0100_0000 Byte4 40
+0b00_0010_0000 Byte3 20
+0b00_0001_0000 Byte2 10
+0b00_0000_1000 Byte1 8
+0b00_0000_0100 Byte0 4
+
+复用寄存器.
+0x0E4 muxctrl_reg57 JTAG_TDI 管脚的复用控制寄存器
+
+低电平亮灯
+himm 0x200f00E4 0x00
+himm 0x201B0400 0x02
+himm 0x201B0008 0x00
+
+高电平灭灯
+himm 0x200f00E4 0x00
+himm 0x201B0400 0x02
+himm 0x201B0008 0x02
+
+
+
+1.wifi led
+
+GPIO6_6
+
+GPIO6 0x201A_0000
+
+0x400 GPIO_DIR GPIO 方向控制寄存器
+0x000～0x3FC GPIO_DATA GPIO 数据寄存器
+
+0b10_0000_0000 Byte7 200
+0b01_0000_0000 Byte6 100
+0b00_1000_0000 Byte5 80
+0b00_0100_0000 Byte4 40
+0b00_0010_0000 Byte3 20
+0b00_0001_0000 Byte2 10
+0b00_0000_1000 Byte1 8
+0b00_0000_0100 Byte0 4
+
+复用寄存器.muxctrl_reg54
+0x0D8 muxctrl_reg54 
+
+
+低电平亮灯
+himm 0x200f00D8 0x00
+himm 0x201A0400 0x40
+himm 0x201A0100 0x00
+
+高电平灭灯
+himm 0x200f00D8 0x00
+himm 0x201A0400 0x40
+himm 0x201A0100 0x40
+
+
+
+
+
+
+
+
+
+
+
+
+
+

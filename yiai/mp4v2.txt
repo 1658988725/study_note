@@ -1,0 +1,150 @@
+./configure --prefix=/home/ll/work2016/hisi3516Cv100/opensource/mp4v2-2.0.0/install/hisiv100 --host=arm-hisiv100nptl-linux --disable-debug 
+
+
+export LD_LIBRARY_PATH='/usr/local/lib:/usr/lib:/tmp/sample/mp4v2/lib/'
+
+
+
+mount tmpfs /mnt -t tmpfs -o size=30M
+
+
+
+
+./configure --prefix=/home/ll/work2016/hisi3516Cv100/opensource/mp4v2-2.0.0/install/hisiv100 --host=arm-hisiv100nptl-linux --disable-shared CC=arm-hisiv100nptl-linux-gcc CXX=arm-hisiv100nptl-linux-g++ 
+
+
+
+./configure --prefix=/home/ll/work2016/hisi3516Cv100/opensource/mp4v2-2.0.0/install/hisiv100 --host=arm-hisiv100nptl-linux  --disable-debug --disable-shared CC=arm-hisiv100nptl-linux-gcc CXX=arm-hisiv100nptl-linux-g++ 
+
+
+
+./configure --prefix=/home/ll/work2016/hisi3516Cv100/opensource/mp4v2-1.9.0/install/hisiv100 --host=arm-hisiv100nptl-linux  --disable-debug --disable-shared CC=arm-hisiv100nptl-linux-gcc CXX=arm-hisiv100nptl-linux-g++ 
+
+
+
+MP4V2 2.0
+./configure --prefix=/home/ll/work2016/hisi3516Cv100/opensource/mp4v2-2.0.0/install/hisiv100 --host=arm-hisiv100nptl-linux --disable-debug --disable-shared CC=arm-hisiv100nptl-linux-gcc CXX=arm-hisiv100nptl-linux-g++ 
+
+./configure --prefix=/home/ll/work2016/hisi3516cv200/opensource/mp4v2-2.0.0/install/hisiv200 --host=arm-hisiv300-linux --disable-debug --disable-shared CC=arm-hisiv300-linux-gcc CXX=arm-hisiv300-linux-g++ 
+
+
+
+
+mp4v2
+
+由于项目需要做mp4文件的合成(264+aac)和mp4文件的解析；MP4文件本身就是应该容器，对于视频来说就是把不同的内容放按照mp4的规则存放而已；
+如果完全自己写代码实现，可能需要完全理解mp4的规则；所以采用开源的的mp4v2来合成和解析mp4文件；
+
+1.mp4v2 源代码下载.
+
+http://www.codeforge.cn/article/259182
+
+2.mp4v2 linux编译
+./configure --prefix=/home/installtest/ --disable-debug --disable-shared
+make
+make install
+
+3.mp4v2一些基本sample的使用，其实在sample下面这些基本的命令代码基本以及包含常用mp4v2的api使用方法.
+
+-rwxr-xr-x 1 ll ll 405K Nov  4 15:49 mp4art
+-rwxr-xr-x 1 ll ll 598K Nov  4 15:49 mp4chaps
+-rwxr-xr-x 1 ll ll 162K Nov  4 15:49 mp4extract
+-rwxr-xr-x 1 ll ll 241K Nov  4 15:49 mp4file
+-rwxr-xr-x 1 ll ll 511K Nov  4 15:49 mp4info
+-rwxr-xr-x 1 ll ll 164K Nov  4 15:49 mp4subtitle
+-rwxr-xr-x 1 ll ll 279K Nov  4 15:49 mp4tags
+-rwxr-xr-x 1 ll ll 860K Nov  4 15:49 mp4track
+-rwxr-xr-x 1 ll ll  98K Nov  4 15:49 mp4trackdump
+
+4.mp4文件一些基础知识
+
+
+./mp4info 20161024091151_180.MP4  
+./mp4info version 2.0.0
+20161024091151_180.MP4  :
+Track   Type    Info
+1       audio   MPEG-4 AAC LC, 180.096 secs, 16 kbps, 8000 Hz
+2       video   H264 Baseline@4.2, 180.000 secs, 8381 kbps, 1920x1080 @ 30.000000 fps
+
+
+./mp4track 20161024091151_180.MP4  --list
+track[0] id=1
+  type           = audio
+  enabled        = true
+  inMovie        = false
+  inPreview      = false
+  layer          = 0
+  alternateGroup = 0
+  volume         = 1.0000
+  width          = 0.00000000
+  height         = 0.00000000
+  language       = Undetermined
+  handlerName    = 
+  userDataName   = <absent>
+track[1] id=2
+  type           = video
+  enabled        = true
+  inMovie        = false
+  inPreview      = false
+  layer          = 0
+  alternateGroup = 0
+  volume         = 0.0000
+  width          = 1920.00000000
+  height         = 1080.00000000
+  language       = Undetermined
+  handlerName    = 
+  userDataName   = <absent>
+
+解析mp4的一些基本内容；比如长宽 和trackid
+
+比如解析track 2  是一个视频通道，这个id从面mp4track 内容里面获取的.
+
+./mp4trackdump 20161024091151_180.MP4  -t 2
+./mp4trackdump version 2.0.0
+mp4file 20161024091151_180.MP4, track 2, samples 5400, timescale 90000
+sampleId      1, size 203970 duration    3000 time     0 00:00:00.000 S
+sampleId      2, size 47935 duration     3000 time     3000 00:00:00.033  
+sampleId      3, size 62824 duration     3000 time     6000 00:00:00.066  
+sampleId      4, size 70342 duration     3000 time     9000 00:00:00.100  
+sampleId      5, size 20730 duration     3000 time    12000 00:00:00.133  
+sampleId      6, size 13241 duration     3000 time    15000 00:00:00.166  
+sampleId      7, size  6947 duration     3000 time    18000 00:00:00.200  
+
+这儿有一些关键信息：
+
+sampleId 就是mp4 里面frame的索引；每个sampleId 对应一阵264的视频
+size 就是frame的大小
+duration 这个是给播放器使用的，播放器需要显示这一帧的时间就是  3000 / 90000 (timescale) 秒;这个视频是30帧的，就是1/30秒；后面的rtsp发流的时间撮也是根据这个时间来处理的；
+后面的时间就是转化为秒为单位的时间；
+
+
+
+比如解析track 1 音频通道
+
+./mp4trackdump 20161024091151_180.MP4  -t 1
+./mp4trackdump version 2.0.0
+mp4file 20161024091151_180.MP4, track 1, samples 1403, timescale 8000
+sampleId      1, size   249 duration     1024 time        0 00:00:00.000 S
+sampleId      2, size   286 duration     1024 time     1024 00:00:00.128 S
+sampleId      3, size   326 duration     1024 time     2048 00:00:00.256 S
+sampleId      4, size   320 duration     1024 time     3072 00:00:00.384 S
+sampleId      5, size   317 duration     1024 time     4096 00:00:00.512 S
+sampleId      6, size   316 duration     1024 time     5120 00:00:00.640 S
+sampleId      7, size   306 duration     1024 time     6144 00:00:00.768 S
+sampleId      8, size   301 duration     1024 time     7168 00:00:00.896 S
+sampleId      9, size   281 duration     1024 time     8192 00:00:01.024 S
+sampleId     10, size   288 duration     1024 time     9216 00:00:01.152 S
+
+sampleId 就是mp4 里面aac frame的索引；每个sampleId 对应一阵aac的视频
+size 就是frame的大小
+duration 音频和视频一样，1024 就是在1024/8000 S时间内音频采样数据通过aac压缩算后得到的，其它音频算法压缩算法也基本一样；
+后面的时间就是转化为秒为单位的时间；
+
+
+
+
+对于mp4v2 就是把你存储264到mp4的流程，和读取的流程给你隐藏了；
+你只需要通过对应的接口~以帧的方式读取处理即可；
+
+
+

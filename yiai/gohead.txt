@@ -1,0 +1,122 @@
+Version:
+goahead-3.1.3
+
+移植参考：
+http://blog.csdn.net/yangzhongxuan/article/details/17373055
+
+1.交叉编译:
+make CC=arm-hisiv100nptl-linux-gcc ARCH=arm
+
+
+make CC=arm-hisiv300-linux-gcc ARCH=arm
+
+
+静态编译：
+make CC=arm-hisiv100nptl-linux-gcc ARCH=arm PROFILE=static
+
+make CC=arm-hisiv300-linux-gcc ARCH=arm PROFILE=static
+
+
+编译的时候需要指定post 的大小.
+
+BIT_GOAHEAD_LIMIT_POST=25000000 make CC=arm-hisiv100nptl-linux-gcc ARCH=arm PROFILE=static -j 8
+
+
+生成文件在linux-arm-default/bin目录下面.
+# ls
+auth.txt      goahead       gopass        libgo.so      web
+ca.crt        goahead-test  libest.so     route.txt
+
+
+问题点：
+1.获取不到IP地址.http.c setLocalHost 函数.
+
+setLocalHost()
+{
+...
+#if 0       
+	if ((hp = gethostbyname(host)) == NULL)
+	{
+		error("Can't get host address for host %s: errno %d", host, errno);
+		return -1;
+	}
+	memcpy((char*)&intaddr, (char *)hp->h_addr_list[0], (size_t)hp->h_length);
+	ipaddr = inet_ntoa(intaddr);
+
+#else
+	int sockfd;
+	struct sockaddr_in sin;
+	struct ifreq ifr;
+	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+	if (sockfd == -1)   
+	{
+		return -1;
+	}
+	strncpy(ifr.ifr_name, "ra0", IFNAMSIZ);    //网卡多的得修改下     
+	ifr.ifr_name[IFNAMSIZ - 1] = 0;
+	if (ioctl(sockfd, SIOCGIFADDR, &ifr) < 0) 
+	{
+		return -1;
+	}
+	memcpy(&sin, &ifr.ifr_addr, sizeof(sin));
+	ipaddr = inet_ntoa(sin.sin_addr);
+#endif     
+	websSetIpAddr(ipaddr);
+	websSetHost(ipaddr);
+}
+
+
+
+2.需要route.txt 和auth.txt
+只需要copy对应的文件到gohead目录即可.
+
+
+3.找不到库libgo.so
+方法1.
+# export
+export HOME='/root'
+export LD_LIBRARY_PATH='/usr/local/lib:/usr/lib:/tmp/sample/gohead'
+export LD_LIBRARY_PATH='/usr/local/lib:/usr/lib:/tmp/sample/hisi3516v200/goahead'
+
+方法2.把libcopy到/user/lib目录下面即可.
+
+4.运行gohead
+./goahead -v /mnt/mmc/
+
+绝对路径，需要指定工作目录--home /home/gohead/
+/home/gohead/goahead -v --home /home/gohead/ /mnt/mm
+
+/home/goahead/goahead -v --home /home/goahead/ /mnt/mmc &
+
+/mnt/mmc指定根目录即可.
+
+5.请求一个视频文件：
+http://192.168.100.2/VIDEO/xxxx.mp4
+
+/home/ll/work2016/study/test/goahead-3.1.3/linux-x64-default/bin
+
+./goahead -v /home/ll/work2016/study/test/goahead-3.1.3/test
+
+
+//**********************************************************************/
+20160809更新
+1.编译的时候需要指定post 的大小.
+
+BIT_GOAHEAD_LIMIT_POST=25000000 make CC=arm-hisiv100nptl-linux-gcc ARCH=arm PROFILE=static -j 8
+
+
+2.goahead.c 里面可以参考test里面.写uploadtest action函数
+   
+  在main函数里面添加action注册回调函数.
+
+
+3.指定的上次文件路径.在代码里面直接指定.
+
+osdep.c upload.c 
+
+
+遇到的问题：
+1.postlimit限制.导致上传文件大小限制;
+2.tmp目录不存在，导致上传后文件rename失败，但是没有错误提示.
+
+

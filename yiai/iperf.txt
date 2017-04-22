@@ -1,0 +1,5 @@
+./configure --host=arm-hisiv100nptl-linux  --prefix=/home/ll/work2016/opensource/iperf-3.1.2_hisi/iperf-3.1.2/installhisi  CXX=arm-hisiv100nptl-linux-g++ CC=arm-hisiv100nptl-linux-gcc
+
+
+
+./configure --host=arm-hisiv300-linux  --prefix=/home/ll/work2016/study/iperf-3.1.4/iperfinstall CFLAGS=-static --enable-static LDFLAGS=-static --disable-shared 

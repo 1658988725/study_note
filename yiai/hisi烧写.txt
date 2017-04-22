@@ -1,0 +1,115 @@
+3、烧写映像文件到SPI Flash
+    以16M SPI Flash为例。
+    1）地址空间说明
+        |      1M       |      3M       |      12M      |
+        |---------------|---------------|---------------|
+        |     boot      |     kernel    |     rootfs    |
+
+        以下的操作均基于图示的地址空间分配，您也可以根据实际情况进行调整。
+    2）烧写u-boot
+        sf probe 0
+        mw.b 82000000 ff 100000
+        tftp 0x82000000 u-boot-hi3518ev200.bin
+        sf probe 0
+        sf erase 0 100000
+        sf write 82000000 0 100000	
+        reset
+    3）烧写内核
+        mw.b 82000000 ff 300000
+        tftp 82000000 uImage_hi3518ev200
+        sf probe 0
+        sf erase 100000 300000
+        sf write 82000000 100000 300000
+		sf write 80008000 100000 300000
+
+
+sf erase 80000 100000
+
+mw.b 82000000 ff 300000
+loady 0x82000000 115200	
+       sf probe 0
+        sf erase 0 100000
+        sf write 82000000 0 100000	
+		
+    4)烧写文件系统
+        mw.b 82000000 ff C00000
+        tftp 0x82000000 rootfs_hi3518ev200_64k.jffs2
+        sf probe 0
+        sf erase 400000 C00000
+		
+		mw.b 0x85000000 ff C00000
+	mw.b 0x82000000 ff C00000
+	loady 0x82000000 115200		
+        sf write 82000000 400000 C00000
+
+		
+    5）设置启动参数
+        setenv bootargs 'mem=64M console=ttyAMA0,115200 root=/dev/mtdblock2 rootfstype=jffs2 mtdparts=hi_sfc:1M(boot),3M(kernel),12M(rootfs)'
+
+
+	setenv bootargs 'mem=64M console=ttyAMA0,115200 root=/dev/mtdblock2 rootfstype=jffs2 mtdparts=hi_sfc:1M(boot),2752K(kernel),320K(cfg),12M(rootfs)'
+	setenv bootargs 'mem=64M console=ttyAMA0,115200 root=/dev/mtdblock3 rootfstype=jffs2 mtdparts=hi_sfc:1M(boot),2688K(kernel),384K(cfg),12M(rootfs)'
+
+
+ 	setenv bootargs 'mem=64M console=ttyAMA0,115200 root=/dev/mtdblock2 rootfstype=jffs2 mtdparts=hi_sfc:1M(boot),3M(kernel),11M(rootfs),1M(cfg)'
+
+	setenv bootargs 'mem=64M console=ttyAMA0,115200 root=/dev/mtdblock2 rootfstype=jffs2 mtdparts=hi_sfc:1M(boot),3M(kernel),11776K(rootfs),512K(cfg)'
+
+	setenv bootargs 'mem=64M console=ttyAMA0,115200 root=/dev/mtdblock2 rootfstype=jffs2 mtdparts=hi_sfc:1M(boot),3M(kernel),12160K(rootfs),128K(cfg)'
+
+
+
+        setenv bootargs 'mem=64M console=ttyAMA2,115200 root=/dev/mtdblock2 rootfstype=cramfs mtdparts=hi_sfc:1M(boot),3M(kernel),12M(rootfs)'
+
+
+        setenv bootcmd 'sf probe 0;sf read 0x82000000 0x100000 0x300000;bootm 0x82000000'
+
+
+setenv bootargs 'mem=256M console=ttyAMA0,115200 root=/dev/mtdblock2 rootfstype=jffs2 mtdparts=hi_sfc:1M(boot),3M(kernel),12M(rootfs)'
+
+
+setenv bootargs 'mem=64M console=ttyAMA1,115200 root=/dev/mtdblock2 rootfstype=jffs2 mtdparts=hi_sfc:1M(boot),3M(kernel),12M(rootfs)'
+setenv bootargs 'mem=64M console=ttyAMA1,115200 root=/dev/mtdblock2 rootfstype=jffs2 mtdparts=hi_sfc:1M(boot),3M(kernel),11M(rootfs),1M(cfg)''
+
+
+
+setenv bootargs 'mem=64M console=ttyAMA0,115200 root=/dev/mtdblock3 rootfstype=jffs2 mtdparts=hi_sfc:1M(boot),2816k(kernel),256k(cfg),12M(rootfs)'
+
+setenv bootargs 'mem=64M console=ttyAMA0,115200 root=/dev/mtdblock3 rootfstype=jffs2 mtdparts=hi_sfc:1M(boot),2560k(kernel),512k(cfg),12M(rootfs)'
+
+
+
+
+
+
+setenv bootargs 'mem=128M console=ttyAMA0,115200 root=/dev/mtdblock3 rootfstype=jffs2 mtdparts=hi_sfc:1M(boot),2688K(kernel),384K(cfg),12M(rootfs)'
+
+
+setenv bootargs 'mem=64M console=ttyAMA0,115200 coherent_pool=6M root=/dev/mtdblock3 rootfstype=jffs2 mtdparts=hi_sfc:1M(boot),2688K(kernel),384K(cfg),12M(rootfs)'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+更新版本的bootargs
+setenv bootargs 'mem=64M console=ttyAMA0,115200 root=/dev/mtdblock3 rootfstype=jffs2 mtdparts=hi_sfc:1M(boot),2688K(kernel),384K(cfg),12M(rootfs)'
+
+setenv bootargs 'mem=192M console=ttyAMA0,115200 root=/dev/mtdblock3 rootfstype=jffs2 mtdparts=hi_sfc:1M(boot),2688K(kernel),384K(cfg),12M(rootfs)'
+
+setenv bootargs 'mem=160M console=ttyAMA0,115200 root=/dev/mtdblock3 rootfstype=jffs2 mtdparts=hi_sfc:1M(boot),2688K(kernel),384K(cfg),12M(rootfs)'
+
+setenv bootargs 'mem=128M console=ttyAMA0,115200 root=/dev/mtdblock3 rootfstype=jffs2 mtdparts=hi_sfc:1M(boot),2688K(kernel),384K(cfg),12M(rootfs)'
+
